@@ -4,7 +4,25 @@ using UnityEngine;
 public class TerrainGenerate : MonoBehaviour
 {
     private EdgeCollider2D edgeColl;
-    public const int Length = 100;
+
+    public struct Limits
+    {
+        public Limits(float xMin, float xMax, float yMin, float yMax)
+        {
+            minX = xMin;
+            maxX = xMax;
+            minY = yMin;
+            maxY = yMax;
+        }
+
+        public float minX;
+        public float maxX;
+        public float minY;
+        public float maxY;
+    }
+
+    public Limits limitTerrain = new Limits(40, 450, 25, 70);
+    public const int Length = 500;
     public int minHeight = 20;
     public int maxHeight = 50;
     public int scanRadius = 2;
@@ -15,7 +33,7 @@ public class TerrainGenerate : MonoBehaviour
 
     public MeshFilter meshFilter;
     public Mesh mesh;
-
+    
     void Awake()
     {
         edgeColl = GetComponent<EdgeCollider2D>();
@@ -29,9 +47,10 @@ public class TerrainGenerate : MonoBehaviour
     void Update()
     {
         int scroll = 0;
+
         if (Input.GetKey(KeyCode.LeftArrow)) scroll--;
         if (Input.GetKey(KeyCode.RightArrow)) scroll++;
-
+        
         if (scroll != 0)
         {
             offset += scroll;
