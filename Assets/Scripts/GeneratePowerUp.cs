@@ -1,13 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GeneratePowerUp : MonoBehaviour
 {
     public Transform groupBarrels;
     public GameObject barrelFuel;
-
-    // Start is called before the first frame update
     void Start()
     {
         int[] barrels = new int[3];

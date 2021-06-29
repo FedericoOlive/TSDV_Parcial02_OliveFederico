@@ -57,7 +57,7 @@ public class TerrainGenerate : MonoBehaviour
                 mapPoints[basesX[i] + j].y = mapPoints[basesX[i]].y;
             }
             GameObject baseLand = Instantiate(cuberef, new Vector3(basesX[i], mapPoints[basesX[i]].y, 0), Quaternion.identity);
-            baseLand.GetComponent<BaseLanding>().indexDistance = i;
+            baseLand.GetComponent<BaseLanding>().indexDistance = i + 1;
         }
     }
     void GenerateHeightmap()
@@ -71,12 +71,9 @@ public class TerrainGenerate : MonoBehaviour
                 mapPoints[i].y = rnd;
             }
         }
-
         for (int s = 0; s < smoothCount; s++)
             Smooth();
-
         AddBasesLanding();
-
         GenerateEdgeCollider();
     }
     void Smooth()

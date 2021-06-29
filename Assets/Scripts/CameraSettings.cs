@@ -4,12 +4,12 @@ public class CameraSettings : MonoBehaviour
 {
     public GameObject player;
     public TerrainGenerate terrain;
-    private float minSize = 10;
+    private float minSize = 15;
     private float maxSize = 20;
     public float offsetDown = 10;
     public float z;
     public Ship ship;
-    private float minAltitude = 20;
+    public float minAltitude = 30;
 
     private void Awake()
     {
@@ -40,13 +40,14 @@ public class CameraSettings : MonoBehaviour
             transform.position = new Vector3(transform.position.x, playerPos.y - offsetDown, z);
         }
 
-        //UpdateZoom();
+        UpdateZoom();
     }
 
     public void UpdateZoom()
     {
-        float zoom = 0;
+        float zoom = maxSize;
         float altitude = ship.AltitudeShip(false);
+
         if (altitude < minAltitude)
             zoom = minSize;
 

@@ -4,21 +4,7 @@ using UnityEngine;
 
 public class Ship : MonoBehaviour
 {
-    public AudioSource audioPropulsor;
-    public Action PlayerLandSuccesful;
-    public Action PlayerExplode;
-
-    private const float velocityToExplode = 1.2f;
-    public enum Status {Fly, Land, Explode}
-
-    public Status status = Status.Fly;
-
-    public GameObject[] propulsor;
-    public LayerMask terrainLM;
-    private Animator anim;
-
-    [Serializable]
-    private class PlayerPhysics
+    [Serializable] private class PlayerPhysics
     {
         public float mass;
         public float linearDrag;
@@ -26,8 +12,7 @@ public class Ship : MonoBehaviour
         public float gravityScale;
     }
 
-    [Serializable]
-    public class PlayerInputs
+    [Serializable] public class PlayerInputs
     {
         public bool defaultValue = true;
         public KeyCode propulsor = KeyCode.A;
@@ -45,15 +30,26 @@ public class Ship : MonoBehaviour
     [SerializeField] private PlayerPhysics playerPhisics;
     [SerializeField] private PlayerInputs playerInputs;
 
-    private Rigidbody2D rb;
-    public int level = 1;
+    AudioSource audioPropulsor;
+    public GameObject[] propulsor;
+    public Action PlayerLandSuccesful;
+    public Action PlayerExplode;
+    public LayerMask terrainLM;
+    private const float velocityToExplode = 2;
+    private const int angleToExplode = 20;
     private float playerHeight = 3.83f;
     private float onTimeFuel;
     private float timeRateFuel = 0.25f;
+    private Rigidbody2D rb;
+    public int level = 1;
+    public int score;
+    public int scoreOnWin = 50;
     public float maxFuel = 1000;
     public float fuelConsumption = 0.5f;
-
-    public float fuel = 1000;
+    public float fuel;
+    public enum Status {Fly, Land, Explode}
+    public Status status = Status.Fly;
+    private Animator anim;
 
     public enum Dificult
     {
@@ -68,26 +64,19 @@ public class Ship : MonoBehaviour
 
     private void Awake()
     {
+        audioPropulsor = GetComponent<AudioSource>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
     }
     void Start()
     {
-        try
-        {
-            fuel = FindObjectOfType<DataPersistant>().playerFuel;
-            level = FindObjectOfType<DataPersistant>().playerLevel;
-            Debug.Log("Data encontrada.");
-        }
-        catch (Exception e)
-        {
-            Debug.Log("NO Data." + e);
-        }
+        DataPersistant.Get().LoadData();
+        Debug.Log("Fuel: " + fuel);
+        Debug.Log("FuelData: " + DataPersistant.Get().data.playerFuel);
         if (playerInputs.defaultValue)
         {
             playerInputs.SetDefaultValues();
         }
-
         playerHeight = GetComponent<BoxCollider2D>().size.y;
         TransferPhysicsProperties();
     }
@@ -117,7 +106,6 @@ public class Ship : MonoBehaviour
                 }
             }
         }
-
         float minDistance = Mathf.Min(distanceRay);
         return minDistance;
     }
@@ -222,7 +210,8 @@ public class Ship : MonoBehaviour
 
     bool CheckExplode(Vector2 velocity)
     {
-        return !(Mathf.Abs(velocity.x) < velocityToExplode && Mathf.Abs(velocity.y) < velocityToExplode);
+        float rotation = transform.rotation.eulerAngles.z;
+        return !((rotation < angleToExplode || rotation > 360 - angleToExplode) && Mathf.Abs(velocity.x) < velocityToExplode && Mathf.Abs(velocity.y) < velocityToExplode);
     }
 
     void Explode()
@@ -238,9 +227,10 @@ public class Ship : MonoBehaviour
     void CheckLand()
     {
         Vector2 velocity = rb.velocity;
-        float rotation = transform.rotation.eulerAngles.z;
-        if (CheckExplode(velocity))
+        if (!CheckExplode(velocity))
         {
+            ReceiveScore();
+            DataPersistant.Get().SaveData();
             PlayerLandSuccesful?.Invoke();
         }
         else
@@ -253,7 +243,10 @@ public class Ship : MonoBehaviour
     {
         fuel = maxFuel;
     }
-
+    void ReceiveScore()
+    {
+        score += scoreOnWin;
+    }
     void PlaySound(bool soundOn, AudioSource audioTrack)
     {
         if (soundOn && !audioTrack.isPlaying)

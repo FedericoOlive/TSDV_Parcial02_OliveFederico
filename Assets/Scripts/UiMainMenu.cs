@@ -7,10 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class UiMainMenu : MonoBehaviour
 {
-    private String[] menues = { "Main Menu", "Options", "Credits", "Exit" };
-
-    [Serializable]
-    public class PanelsList
+    [Serializable] public class PanelsList
     {
         public List<Image> images = new List<Image>();
         public List<TextMeshProUGUI> texts = new List<TextMeshProUGUI>();
@@ -62,7 +59,9 @@ public class UiMainMenu : MonoBehaviour
 
         try
         {
-            Destroy(FindObjectOfType<DataPersistant>().gameObject);
+            GameObject dataPersistant = FindObjectOfType<DataPersistant>().gameObject;
+            if (dataPersistant)
+                Destroy(FindObjectOfType<DataPersistant>().gameObject);
         }
         catch (Exception e)
         {

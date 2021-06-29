@@ -16,6 +16,7 @@ public class UiGamePlay : MonoBehaviour
     public TextMeshProUGUI textFuel;
     public TextMeshProUGUI textClock;
     public TextMeshProUGUI textLevel;
+    public TextMeshProUGUI textScore;
 
     public GameObject panelExplode;
     public GameObject panelLandSuccess;
@@ -33,14 +34,15 @@ public class UiGamePlay : MonoBehaviour
 
         rbPlayer = player.GetComponent<Rigidbody2D>();
         Pause(false);
-        textLevel.text = "Level: " + player.level;
+        textLevel.text = "Level: " + DataPersistant.Get().data.playerLevel;
+        textScore.text = DataPersistant.Get().data.playerScore.ToString();
     }
 
     void Update()
     {
         if (player.status != Ship.Status.Explode)
         {
-            timer += Time.deltaTime;
+            if (player.status == Ship.Status.Fly) timer += Time.deltaTime;
             textClock.text = ConvertTimerToString(timer);
             uiFuelPlayer.fillAmount = player.fuel / player.maxFuel;
             textFuel.text = player.fuel.ToString("F0");
@@ -50,6 +52,7 @@ public class UiGamePlay : MonoBehaviour
             ActiveVelocityUI(playerVel.y, ref uiArrowUpDown, textVelV);
 
             textAltitude.text = "Altitude:\n" + (player.AltitudeShip(false) * 10).ToString("F0");
+            
         }
         else
         {
@@ -66,8 +69,8 @@ public class UiGamePlay : MonoBehaviour
     }
     void PlayerLand()
     {
+        textScore.text = player.score.ToString();
         panelLandSuccess.SetActive(true);
-
     }
     void ActiveVelocityUI(float playerVelocity, ref GameObject[] go, TextMeshProUGUI text)
     {

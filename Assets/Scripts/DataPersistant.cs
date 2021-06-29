@@ -1,26 +1,43 @@
 ﻿using UnityEngine;
 public class DataPersistant : MonoBehaviourSingleton<DataPersistant>
 {
-    public float playerFuel;
-    public int playerLevel;
+    public struct Data
+    {
+        public float playerFuel;
+        public int playerLevel;
+        public int playerScore;
+    }
+    public Data data;
+    
     private Ship player;
     
     void Start()
     {
         player = FindObjectOfType<Ship>();
-        player.PlayerExplode += DestroyDataPersistant;
-        player.PlayerLandSuccesful += SaveData;
-        playerFuel = player.fuel;
-        playerLevel = player.level;
+        data.playerScore = 0;
+        data.playerFuel = 1000;
+        data.playerLevel = 1;
+        LoadData();
     }
-    void SaveData()
+    public void SaveData()
     {
-        playerFuel = player.fuel;
-        playerLevel = player.level;
+        player = FindObjectOfType<Ship>();
+        Debug.Log("Guardando: player.fuel:" + player.fuel);
+        data.playerScore = player.score;
+        data.playerFuel = player.fuel;
+        data.playerLevel = player.level;
     }
     public void DestroyDataPersistant()
     {
         if (gameObject)
             Destroy(gameObject);
+    }
+    public void LoadData()
+    {
+        player = FindObjectOfType<Ship>();
+        player.fuel = data.playerFuel;
+        Debug.Log("Cargando: player.fuel:" + player.fuel);
+        player.level = data.playerLevel;
+        player.score = data.playerScore;
     }
 }
