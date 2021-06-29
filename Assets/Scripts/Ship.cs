@@ -204,5 +204,15 @@ public class Ship : MonoBehaviour
                 PlayerExplode?.Invoke();
             }
         }
+        else if (other.gameObject.CompareTag("BarrelFuel"))
+        {
+            FullFuel();
+            Destroy(other.gameObject);
+        }
+    }
+
+    void FullFuel()
+    {
+        fuel = maxFuel;
     }
 }
