@@ -27,19 +27,32 @@ public class UiGamePlay : MonoBehaviour
         rbPlayer = player.GetComponent<Rigidbody2D>();
         Pause(false);
     }
+
     void Update()
     {
-        timer += Time.deltaTime;
-        textClock.text = ConvertTimerToString(timer);
-        uiFuelPlayer.fillAmount = player.fuel / player.maxFuel;
-        textFuel.text = player.fuel.ToString("F0");
-        Vector2 playerVel = rbPlayer.velocity;
+        if (player.status != Ship.Status.Explode)
+        {
+            timer += Time.deltaTime;
+            textClock.text = ConvertTimerToString(timer);
+            uiFuelPlayer.fillAmount = player.fuel / player.maxFuel;
+            textFuel.text = player.fuel.ToString("F0");
+            Vector2 playerVel = rbPlayer.velocity;
 
-        ActiveVelocityUI(playerVel.x, ref uiArrowLeftRight, textVelH);
-        ActiveVelocityUI(playerVel.y, ref uiArrowUpDown, textVelV);
+            ActiveVelocityUI(playerVel.x, ref uiArrowLeftRight, textVelH);
+            ActiveVelocityUI(playerVel.y, ref uiArrowUpDown, textVelV);
 
-        textAltitude.text = (player.AltitudeShip(false) * 10).ToString("F0");
+            textAltitude.text = (player.AltitudeShip(false) * 10).ToString("F0");
+        }
+        else
+        {
+            string text = "No Signal";
+            textFuel.text = text;
+            textVelH.text = text;
+            textVelV.text = text;
+            textAltitude.text = text;
+        }
     }
+
     void ActiveVelocityUI(float playerVelocity, ref GameObject[] go, TextMeshProUGUI text)
     {
         int velocity = (int) (playerVelocity * 10);

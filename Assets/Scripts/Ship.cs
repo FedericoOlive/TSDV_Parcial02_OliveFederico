@@ -1,11 +1,17 @@
 ﻿using System;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class Ship : MonoBehaviour
 {
+    private const float velocityToExplode = 0.1f;
+    public enum Status {Fly, Land, Explode}
+
+    public Status status = Status.Fly;
+
     public GameObject[] propulsor;
     public LayerMask terrainLM;
-
+    private Animator anim;
     [Serializable]
     private class PlayerPhysics
     {
@@ -39,6 +45,7 @@ public class Ship : MonoBehaviour
     private float onTimeFuel;
     private float timeRateFuel = 0.25f;
     public float maxFuel = 1000;
+    public float fuelConsumption = 0.5f;
 
     public float fuel = 1000;
 
@@ -55,6 +62,7 @@ public class Ship : MonoBehaviour
 
     private void Awake()
     {
+        anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
     }
     void Start()
@@ -67,14 +75,11 @@ public class Ship : MonoBehaviour
         playerHeight = GetComponent<BoxCollider2D>().size.y;
         TransferPhysicsProperties();
     }
-    void Update()
+    void FixedUpdate()
     {
         PlayerInput();
     }
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        Debug.Log("Collision");
-    }
+    
     public float CheckDistanceTerrain()
     {
         Vector2[] directionRay = new Vector2[3];
@@ -106,14 +111,18 @@ public class Ship : MonoBehaviour
         {
             if (Input.GetKey(playerInputs.propulsor))
             {
-                onTimeFuel += Time.deltaTime;
-                rb.AddForce(transform.up * propulsorForce);
-                if (onTimeFuel > timeRateFuel)
+                if (fuel > 0)
                 {
-                    fuel -= 0.5f;
+                    onTimeFuel += Time.deltaTime;
+                    rb.AddForce(transform.up * propulsorForce);
+                    if (onTimeFuel > timeRateFuel)
+                    {
+                        fuel -= fuelConsumption;
+                        if (fuel < 0)
+                            fuel = 0;
+                    }
+                    propulsor[0].SetActive(true);
                 }
-
-                propulsor[0].SetActive(true);
             }
             else
             {
@@ -153,6 +162,30 @@ public class Ship : MonoBehaviour
             }
             Debug.LogWarning("Altitud Ship no conecta con el Terreno.");
             return -1;
+        }
+    }
+    
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        Vector2 velocity = rb.velocity;
+        Debug.Log("Collision: Velx:" + velocity.x + ", VelY: " + velocity.y);
+
+        if (other.gameObject.CompareTag("Terrain"))
+        {
+            if (Mathf.Abs(velocity.x) < velocityToExplode && Mathf.Abs(velocity.y) < velocityToExplode)
+            {
+                status = Status.Land;
+                Debug.Log("Land succesful.");
+
+            }
+            else
+            {
+                Debug.Log("Explode.");
+                status = Status.Explode;
+                anim.SetTrigger("Explode");
+                rb.constraints = RigidbodyConstraints2D.FreezeAll;
+                rb.isKinematic = true;
+            }
         }
     }
 }
