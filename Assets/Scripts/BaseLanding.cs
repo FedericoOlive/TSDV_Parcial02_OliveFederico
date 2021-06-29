@@ -1,18 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class BaseLanding : MonoBehaviour
 {
     public int indexDistance;
-
+    public TextMeshProUGUI text;
     void Start()
     {
-        
-    }
-
-    void Update()
-    {
-        
+        text.text = "X " + indexDistance;
     }
 }

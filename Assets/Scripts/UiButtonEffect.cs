@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Build;
+using UnityEngine;
 
 public class UiButtonEffect : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class UiButtonEffect : MonoBehaviour
     private bool increment = false;
     private Vector3 initialScale;
     private Vector3 scale;
-
+    public AudioSource fxButton;
     private void Awake()
     {
         increment = false;
@@ -28,6 +29,8 @@ public class UiButtonEffect : MonoBehaviour
     public void OnMouseEnterButton()
     {
         increment = true;
+        if (fxButton)
+            fxButton.Play();
     }
     public void OnMouseExitButton()
     {

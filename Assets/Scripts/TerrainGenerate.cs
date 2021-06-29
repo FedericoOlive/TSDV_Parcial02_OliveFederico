@@ -62,7 +62,6 @@ public class TerrainGenerate : MonoBehaviour
     }
     void GenerateHeightmap()
     {
-        //Random.InitState(0);
         for (int j = 0; j < offset + Length; j++)
         {
             float rnd = Random.Range(minHeight, maxHeight);

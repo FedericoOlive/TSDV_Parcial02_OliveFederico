@@ -15,6 +15,7 @@ public class UiGamePlay : MonoBehaviour
     public TextMeshProUGUI textAltitude;
     public TextMeshProUGUI textFuel;
     public TextMeshProUGUI textClock;
+    public TextMeshProUGUI textLevel;
 
     public GameObject panelExplode;
     public GameObject panelLandSuccess;
@@ -32,6 +33,7 @@ public class UiGamePlay : MonoBehaviour
 
         rbPlayer = player.GetComponent<Rigidbody2D>();
         Pause(false);
+        textLevel.text = "Level: " + player.level;
     }
 
     void Update()
@@ -47,7 +49,7 @@ public class UiGamePlay : MonoBehaviour
             ActiveVelocityUI(playerVel.x, ref uiArrowLeftRight, textVelH);
             ActiveVelocityUI(playerVel.y, ref uiArrowUpDown, textVelV);
 
-            textAltitude.text = (player.AltitudeShip(false) * 10).ToString("F0");
+            textAltitude.text = "Altitude:\n" + (player.AltitudeShip(false) * 10).ToString("F0");
         }
         else
         {

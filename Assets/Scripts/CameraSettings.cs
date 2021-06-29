@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public class CameraSettings : MonoBehaviour
 {
     public GameObject player;
@@ -7,7 +8,14 @@ public class CameraSettings : MonoBehaviour
     private float maxSize = 20;
     public float offsetDown = 10;
     public float z;
-    
+    public Ship ship;
+    private float minAltitude = 20;
+
+    private void Awake()
+    {
+        ship = player.GetComponent<Ship>();
+    }
+
     void Start()
     {
         z = transform.position.z;
@@ -37,9 +45,10 @@ public class CameraSettings : MonoBehaviour
 
     public void UpdateZoom()
     {
-        float zoom = player.GetComponent<Ship>().CheckDistanceTerrain();
-        zoom = (zoom < minSize) ? minSize : 
-               (zoom > maxSize) ? maxSize : zoom;
+        float zoom = 0;
+        float altitude = ship.AltitudeShip(false);
+        if (altitude < minAltitude)
+            zoom = minSize;
 
         GetComponent<Camera>().orthographicSize = zoom;
     }

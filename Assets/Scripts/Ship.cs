@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Ship : MonoBehaviour
 {
+    public AudioSource audioPropulsor;
     public Action PlayerLandSuccesful;
     public Action PlayerExplode;
 
-    private const float velocityToExplode = 800f;
+    private const float velocityToExplode = 1.2f;
     public enum Status {Fly, Land, Explode}
 
     public Status status = Status.Fly;
@@ -122,36 +123,42 @@ public class Ship : MonoBehaviour
     }
     void PlayerInput()
     {
-        if (Time.timeScale > 0.5f)
+        if (status == Status.Fly)
         {
-            if (Input.GetKey(playerInputs.propulsor))
+            if (Time.timeScale > 0.5f)
             {
-                if (fuel > 0)
+                if (Input.GetKey(playerInputs.propulsor))
                 {
-                    onTimeFuel += Time.deltaTime;
-                    rb.AddForce(transform.up * propulsorForce);
-                    if (onTimeFuel > timeRateFuel)
+                    if (fuel > 0)
                     {
-                        fuel -= fuelConsumption;
-                        if (fuel < 0)
-                            fuel = 0;
+                        onTimeFuel += Time.deltaTime;
+                        rb.AddForce(transform.up * propulsorForce);
+                        if (onTimeFuel > timeRateFuel)
+                        {
+                            fuel -= fuelConsumption;
+                            if (fuel < 0)
+                                fuel = 0;
+                        }
+
+                        propulsor[0].SetActive(true);
+                        PlaySound(true, audioPropulsor);
                     }
-                    propulsor[0].SetActive(true);
                 }
-            }
-            else
-            {
-                propulsor[0].SetActive(false);
-            }
+                else
+                {
+                    PlaySound(false, audioPropulsor);
+                    propulsor[0].SetActive(false);
+                }
 
-            if (Input.GetKey(playerInputs.rotateLeft))
-            {
-                rb.AddTorque(rotateForce);
-            }
+                if (Input.GetKey(playerInputs.rotateLeft))
+                {
+                    rb.AddTorque(rotateForce);
+                }
 
-            if (Input.GetKey(playerInputs.rotateRight))
-            {
-                rb.AddTorque(-rotateForce);
+                if (Input.GetKey(playerInputs.rotateRight))
+                {
+                    rb.AddTorque(-rotateForce);
+                }
             }
         }
     }
@@ -179,40 +186,79 @@ public class Ship : MonoBehaviour
             return -1;
         }
     }
-    
+
     private void OnCollisionEnter2D(Collision2D other)
     {
         Vector2 velocity = rb.velocity;
         Debug.Log("Collision: Velx:" + velocity.x + ", VelY: " + velocity.y);
+        string tags = other.gameObject.tag;
 
-        if (other.gameObject.CompareTag("Terrain"))
+        switch (tags)
         {
-            if (Mathf.Abs(velocity.x) < velocityToExplode && Mathf.Abs(velocity.y) < velocityToExplode)
-            {
-                status = Status.Land;
-                Debug.Log("Land succesful.");
-                PlayerLandSuccesful?.Invoke();
-            }
-            else
-            {
-                Debug.Log("Explode.");
-                status = Status.Explode;
-                anim.SetTrigger("Explode");
-                rb.constraints = RigidbodyConstraints2D.FreezeAll;
-                rb.isKinematic = true;
-                fuel = 0;
-                PlayerExplode?.Invoke();
-            }
+            case "BarrelFuel":
+                FullFuel();
+                Destroy(other.gameObject);
+                if (CheckExplode(velocity))
+                    Explode();
+                break;
+            case "BaseInitial":
+                if (CheckExplode(velocity))
+                    Explode();
+                break;
+            default:
+                if (!CheckExplode(velocity))
+                {
+                    status = Status.Land;
+                    Debug.Log("Land succesful.");
+                    Invoke(nameof(CheckLand), 2);
+                }
+                else
+                {
+                    Explode();
+                }
+                break;
         }
-        else if (other.gameObject.CompareTag("BarrelFuel"))
+    }
+
+    bool CheckExplode(Vector2 velocity)
+    {
+        return !(Mathf.Abs(velocity.x) < velocityToExplode && Mathf.Abs(velocity.y) < velocityToExplode);
+    }
+
+    void Explode()
+    {
+        Debug.Log("Explode.");
+        status = Status.Explode;
+        anim.SetTrigger("Explode");
+        fuel = 0;
+        PlayerExplode?.Invoke();
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        rb.isKinematic = true;
+    }
+    void CheckLand()
+    {
+        Vector2 velocity = rb.velocity;
+        float rotation = transform.rotation.eulerAngles.z;
+        if (CheckExplode(velocity))
         {
-            FullFuel();
-            Destroy(other.gameObject);
+            PlayerLandSuccesful?.Invoke();
         }
+        else
+            PlayerExplode?.Invoke();
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        rb.isKinematic = true;
     }
 
     void FullFuel()
     {
         fuel = maxFuel;
+    }
+
+    void PlaySound(bool soundOn, AudioSource audioTrack)
+    {
+        if (soundOn && !audioTrack.isPlaying)
+            audioTrack.Play();
+        else if (!soundOn)
+            audioTrack.Stop();
     }
 }

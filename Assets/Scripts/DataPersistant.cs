@@ -20,6 +20,7 @@ public class DataPersistant : MonoBehaviourSingleton<DataPersistant>
     }
     public void DestroyDataPersistant()
     {
-        Destroy(gameObject);
+        if (gameObject)
+            Destroy(gameObject);
     }
 }
