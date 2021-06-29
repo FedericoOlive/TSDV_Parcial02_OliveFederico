@@ -59,6 +59,15 @@ public class UiMainMenu : MonoBehaviour
                 }
             }
         }
+
+        try
+        {
+            Destroy(FindObjectOfType<DataPersistant>().gameObject);
+        }
+        catch (Exception e)
+        {
+            // ignored
+        }
     }
 
     private void Update()

@@ -7,6 +7,9 @@ public class ParallaxBackGround : MonoBehaviour
 {
     private Rigidbody2D player;
     public Vector2 playerVel;
+    public GameObject[] backGroundMoon;
+    private float backGroundMoonWidth = 81.3f;
+    private int playerOverIndex = 0;
 
     private void Awake()
     {
@@ -14,10 +17,10 @@ public class ParallaxBackGround : MonoBehaviour
     }
     void Start()
     {
-        playerVel = player.velocity;
+
     }
     void Update()
     {
-        transform.position += new Vector3(playerVel.x, playerVel.y, transform.position.z);
+
     }
 }

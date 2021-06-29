@@ -16,6 +16,9 @@ public class UiGamePlay : MonoBehaviour
     public TextMeshProUGUI textFuel;
     public TextMeshProUGUI textClock;
 
+    public GameObject panelExplode;
+    public GameObject panelLandSuccess;
+
     public Image uiFuelPlayer;
     public float timer;
 
@@ -24,6 +27,9 @@ public class UiGamePlay : MonoBehaviour
 
     void Start()
     {
+        player.PlayerLandSuccesful += PlayerLand;
+        player.PlayerExplode += PlayerExplode;
+
         rbPlayer = player.GetComponent<Rigidbody2D>();
         Pause(false);
     }
@@ -52,7 +58,15 @@ public class UiGamePlay : MonoBehaviour
             textAltitude.text = text;
         }
     }
+    void PlayerExplode()
+    {
+        panelExplode.SetActive(true);
+    }
+    void PlayerLand()
+    {
+        panelLandSuccess.SetActive(true);
 
+    }
     void ActiveVelocityUI(float playerVelocity, ref GameObject[] go, TextMeshProUGUI text)
     {
         int velocity = (int) (playerVelocity * 10);

@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Ship : MonoBehaviour
 {
-    private const float velocityToExplode = 0.1f;
+    public Action PlayerLandSuccesful;
+    public Action PlayerExplode;
+
+    private const float velocityToExplode = 800f;
     public enum Status {Fly, Land, Explode}
 
     public Status status = Status.Fly;
@@ -12,6 +15,7 @@ public class Ship : MonoBehaviour
     public GameObject[] propulsor;
     public LayerMask terrainLM;
     private Animator anim;
+
     [Serializable]
     private class PlayerPhysics
     {
@@ -41,6 +45,7 @@ public class Ship : MonoBehaviour
     [SerializeField] private PlayerInputs playerInputs;
 
     private Rigidbody2D rb;
+    public int level = 1;
     private float playerHeight = 3.83f;
     private float onTimeFuel;
     private float timeRateFuel = 0.25f;
@@ -67,6 +72,16 @@ public class Ship : MonoBehaviour
     }
     void Start()
     {
+        try
+        {
+            fuel = FindObjectOfType<DataPersistant>().playerFuel;
+            level = FindObjectOfType<DataPersistant>().playerLevel;
+            Debug.Log("Data encontrada.");
+        }
+        catch (Exception e)
+        {
+            Debug.Log("NO Data." + e);
+        }
         if (playerInputs.defaultValue)
         {
             playerInputs.SetDefaultValues();
@@ -176,7 +191,7 @@ public class Ship : MonoBehaviour
             {
                 status = Status.Land;
                 Debug.Log("Land succesful.");
-
+                PlayerLandSuccesful?.Invoke();
             }
             else
             {
@@ -185,6 +200,8 @@ public class Ship : MonoBehaviour
                 anim.SetTrigger("Explode");
                 rb.constraints = RigidbodyConstraints2D.FreezeAll;
                 rb.isKinematic = true;
+                fuel = 0;
+                PlayerExplode?.Invoke();
             }
         }
     }
