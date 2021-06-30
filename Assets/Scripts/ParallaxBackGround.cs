@@ -1,8 +1,4 @@
-﻿using System;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.Rendering;
-using Vector3 = UnityEngine.Vector3;
+﻿using UnityEngine;
 
 public class ParallaxBackGround : MonoBehaviour
 {
@@ -21,6 +17,6 @@ public class ParallaxBackGround : MonoBehaviour
     {
         float offset = (initialPosPlayer - player.position.x) / speed;
         Vector3 pos = transform.position;
-        transform.position = new Vector3(initialPos - offset, pos.y, pos.z);
+        transform.position = new Vector3(initialPos + offset, pos.y, pos.z);
     }
 }

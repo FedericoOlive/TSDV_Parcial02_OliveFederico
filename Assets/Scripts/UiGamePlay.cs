@@ -121,4 +121,8 @@ public class UiGamePlay : MonoBehaviour
     {
         SceneManager.LoadScene(scene);
     }
+    public void DestoyDataPersistant()
+    {
+        DataPersistant.Get().DestroyDataPersistant();
+    }
 }

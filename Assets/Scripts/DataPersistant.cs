@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-public class DataPersistant : MonoBehaviourSingleton<DataPersistant>
+﻿public class DataPersistant : MonoBehaviourSingleton<DataPersistant>
 {
     public struct Data
     {

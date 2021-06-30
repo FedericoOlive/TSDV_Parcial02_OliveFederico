@@ -1,5 +1,4 @@
-﻿using UnityEditor.Build;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UiButtonEffect : MonoBehaviour
 {

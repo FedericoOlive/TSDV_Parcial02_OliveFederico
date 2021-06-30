@@ -12,17 +12,16 @@ public class WebsRequests : MonoBehaviour
     // Order 2.2: {"message": "success", "iss_position": {"latitude": "-26.6301", "longitude": "-0.5100"}, "timestamp": 1624974597}
     // Order 3.1: {"message": "success", "timestamp": 1624974597, "iss_position": {"longitude": "-0.5100", "latitude": "-26.6301"}}
     // Order 3.2: {"message": "success", "timestamp": 1624974597, "iss_position": {"latitude": "-26.6301", "longitude": "-0.5100"}}
+
+    private const string pathISS = "http://api.open-notify.org/iss-now.json";
     private string longLat = "";
     private int indexAperturaLlave;
     private int indexCierreLlave;
     private int indexComa;
-    private string var1;
-    private string var2;
+    private string varLat;
+    private string varLon;
     private int charO_lOngitude;
     private int charI_latItude;
-    
-    bool disordered = false; // Por algún motivo la página, a veces, desordena los datos.
-    private const string pathISS = "http://api.open-notify.org/iss-now.json";
 
     public class ISS
     {
@@ -76,25 +75,25 @@ public class WebsRequests : MonoBehaviour
                 indexCierreLlave = data.IndexOf("}", 2);
                 longLat = data.Substring(indexAperturaLlave, indexCierreLlave - indexAperturaLlave); // {"longitude": "-0.5100", "latitude": "-26.6301"}
                 indexComa = longLat.IndexOf(",");
-                var1 = longLat.Substring(15, indexComa - 16);
-                //Debug.Log("Var1: " + var1);
-                var2 = longLat.Substring(indexComa + 14);
-                var2 = var2.Substring(1, var2.Length - 2);
-                //Debug.Log("Var2: " + var2);
 
                 charO_lOngitude = longLat.IndexOf('o');
                 charI_latItude = longLat.IndexOf('i');
 
-                if (charO_lOngitude < charI_latItude)
+                if (charI_latItude < charO_lOngitude)
                 {
-                    iss.longitude = var1;
-                    iss.latitude = var2;
+                    varLon = longLat.Substring(14, indexComa - 15);
+                    varLat = longLat.Substring(indexComa + 15);
+                    varLat = varLat.Substring(1, varLat.Length - 2);
                 }
                 else
                 {
-                    iss.longitude = var2;
-                    iss.latitude = var1;
+                    varLon = longLat.Substring(15, indexComa - 16);
+                    varLat = longLat.Substring(indexComa + 14);
+                    varLat = varLat.Substring(1, varLat.Length - 2);
                 }
+                iss.longitude = varLon;
+                iss.latitude = varLat;
+                
                 text.text = "International\nSpace\nStation:\n\nNow on:\nLatitude: " + iss.latitude + "\nLongitude: " + iss.longitude;
             }
         }
