@@ -8,9 +8,8 @@ public class DataPersistant : MonoBehaviourSingleton<DataPersistant>
         public int playerScore;
     }
     public Data data;
-    
     private Ship player;
-    
+
     void Start()
     {
         player = FindObjectOfType<Ship>();
@@ -22,7 +21,7 @@ public class DataPersistant : MonoBehaviourSingleton<DataPersistant>
     public void SaveData()
     {
         player = FindObjectOfType<Ship>();
-        Debug.Log("Guardando: player.fuel:" + player.fuel);
+        //Debug.Log("Guardando: player.fuel:" + player.fuel);
         data.playerScore = player.score;
         data.playerFuel = player.fuel;
         data.playerLevel = player.level;
@@ -36,7 +35,7 @@ public class DataPersistant : MonoBehaviourSingleton<DataPersistant>
     {
         player = FindObjectOfType<Ship>();
         player.fuel = data.playerFuel;
-        Debug.Log("Cargando: player.fuel:" + player.fuel);
+        //Debug.Log("Cargando: player.fuel:" + player.fuel);
         player.level = data.playerLevel;
         player.score = data.playerScore;
     }

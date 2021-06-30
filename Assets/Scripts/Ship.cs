@@ -71,8 +71,8 @@ public class Ship : MonoBehaviour
     void Start()
     {
         DataPersistant.Get().LoadData();
-        Debug.Log("Fuel: " + fuel);
-        Debug.Log("FuelData: " + DataPersistant.Get().data.playerFuel);
+        //Debug.Log("Fuel: " + fuel);
+        //Debug.Log("FuelData: " + DataPersistant.Get().data.playerFuel);
         if (playerInputs.defaultValue)
         {
             playerInputs.SetDefaultValues();
@@ -80,6 +80,7 @@ public class Ship : MonoBehaviour
         playerHeight = GetComponent<BoxCollider2D>().size.y;
         TransferPhysicsProperties();
     }
+
     void FixedUpdate()
     {
         PlayerInput();
@@ -178,7 +179,7 @@ public class Ship : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         Vector2 velocity = rb.velocity;
-        Debug.Log("Collision: Velx:" + velocity.x + ", VelY: " + velocity.y);
+        //Debug.Log("Collision: Velx:" + velocity.x + ", VelY: " + velocity.y);
         string tags = other.gameObject.tag;
 
         switch (tags)
@@ -197,7 +198,6 @@ public class Ship : MonoBehaviour
                 if (!CheckExplode(velocity))
                 {
                     status = Status.Land;
-                    Debug.Log("Land succesful.");
                     Invoke(nameof(CheckLand), 2);
                 }
                 else
@@ -223,12 +223,14 @@ public class Ship : MonoBehaviour
         PlayerExplode?.Invoke();
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
         rb.isKinematic = true;
+        Destroy(DataPersistant.Get().gameObject);
     }
     void CheckLand()
     {
         Vector2 velocity = rb.velocity;
         if (!CheckExplode(velocity))
         {
+            Debug.Log("Land succesful.");
             ReceiveScore();
             DataPersistant.Get().SaveData();
             PlayerLandSuccesful?.Invoke();

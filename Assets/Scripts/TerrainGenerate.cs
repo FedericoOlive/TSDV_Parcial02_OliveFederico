@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class TerrainGenerate : MonoBehaviour
 {
-    public GameObject cuberef;
-    private EdgeCollider2D edgeColl;
+    public Transform groupBasesLanders;
+    public GameObject basesLander;
 
     public struct Limits
     {
@@ -37,7 +37,6 @@ public class TerrainGenerate : MonoBehaviour
 
     void Awake()
     {
-        edgeColl = GetComponent<EdgeCollider2D>();
         mesh = new Mesh {name = "Terrain mesh"};
         meshFilter.mesh = mesh;
 
@@ -56,7 +55,7 @@ public class TerrainGenerate : MonoBehaviour
             {
                 mapPoints[basesX[i] + j].y = mapPoints[basesX[i]].y;
             }
-            GameObject baseLand = Instantiate(cuberef, new Vector3(basesX[i], mapPoints[basesX[i]].y, 0), Quaternion.identity);
+            GameObject baseLand = Instantiate(basesLander, new Vector3(basesX[i], mapPoints[basesX[i]].y, 0), Quaternion.identity, groupBasesLanders);
             baseLand.GetComponent<BaseLanding>().indexDistance = i + 1;
         }
     }
@@ -95,7 +94,6 @@ public class TerrainGenerate : MonoBehaviour
                     heightCount++;
                 }
             }
-
             float heightAverage = heightSum / heightCount;
             mapPoints[i].y = heightAverage;
             mapPoints[i].x = i;
@@ -126,7 +124,6 @@ public class TerrainGenerate : MonoBehaviour
             triangles.Add(newOffset + 2);
             triangles.Add(newOffset + 3);
         }
-
         mesh.vertices = positions.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
