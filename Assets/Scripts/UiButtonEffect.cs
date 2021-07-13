@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class UiButtonEffect : MonoBehaviour
+public class UiButtonEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private float scaleMultiply = 3;
     [SerializeField] private float limit = 1.2f;
@@ -37,7 +38,7 @@ public class UiButtonEffect : MonoBehaviour
     }
     private void ChangeScale()
     {
-        float timeStep = scaleMultiply * Time.deltaTime;
+        float timeStep = scaleMultiply * Time.unscaledDeltaTime;
         scale = transform.localScale;
         if (increment)
         {
@@ -63,5 +64,14 @@ public class UiButtonEffect : MonoBehaviour
                 transform.localScale = new Vector3(initialScale.x, initialScale.y, initialScale.z);
             }
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        OnMouseEnterButton(); 
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        OnMouseExitButton();
     }
 }

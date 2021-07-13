@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class Ship : MonoBehaviour
@@ -168,7 +169,7 @@ public class Ship : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1000, terrainLM);
             if (hit)
             {
-                return hit.distance - playerHeight / 2;
+                return hit.distance - (playerHeight * 2 + 4) / 10;
             }
             Debug.LogWarning("Altitud Ship no conecta con el Terreno.");
             return -1;
